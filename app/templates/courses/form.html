@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}{% if course %}Edit Course{% else %}New Course{% endif %}{% endblock %}
+
+{% block content %}
+<div class="auth-card wide">
+    <h2>{% if course %}Edit Course{% else %}Create Course{% endif %}</h2>
+    <form method="POST" class="form">
+        <div class="form-group">
+            <label for="title">Title</label>
+            <input type="text" id="title" name="title" required
+                   value="{{ course.title if course else '' }}">
+        </div>
+        <div class="form-group">
+            <label for="description">Description</label>
+            <textarea id="description" name="description" rows="4">{{ course.description if course else '' }}</textarea>
+        </div>
+        <div class="form-group">
+            <label for="department">Department</label>
+            <select id="department" name="department" required>
+                {% for code, name in departments %}
+                <option value="{{ code }}"
+                    {% if course and course.department == code %}selected
+                    {% elif not course and code == 'GENERAL' %}selected{% endif %}>
+                    {{ code }} – {{ name }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        {% if course %}
+        <div class="form-group checkbox">
+            <label>
+                <input type="checkbox" name="is_published" {% if course.is_published %}checked{% endif %}>
+                Published
+            </label>
+        </div>
+        {% endif %}
+        <button type="submit" class="btn btn-primary">
+            {% if course %}Save Changes{% else %}Create Course{% endif %}
+        </button>
+        <a href="{{ url_for('main.dashboard') }}" class="btn btn-outline">Cancel</a>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Instructor Dashboard{% endblock %}
+
+{% block content %}
+<div class="section-header">
+    <h1>Instructor Dashboard</h1>
+    <a href="{{ url_for('courses.create') }}" class="btn btn-primary">+ New Course</a>
+</div>
+
+{% if courses %}
+    <div class="card-grid">
+        {% for course in courses %}
+            <div class="card">
+                <h3>{{ course.title }}</h3>
+                <p class="muted">{{ course.description[:100] }}{% if course.description|length > 100 %}...{% endif %}</p>
+                <p class="meta">
+                    {{ course.enrollment_count() }} students ·
+                    {{ course.quizzes.count() }} quizzes ·
+                    {% if course.is_published %}Published{% else %}Draft{% endif %}
+                </p>
+                <div class="card-actions">
+                    <a href="{{ url_for('courses.detail', course_id=course.id) }}" class="btn btn-sm">View</a>
+                    <a href="{{ url_for('courses.edit', course_id=course.id) }}" class="btn btn-sm btn-outline">Edit</a>
+                    <a href="{{ url_for('quizzes.create', course_id=course.id) }}" class="btn btn-sm">Add Quiz</a>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <p class="muted">You haven't created any courses yet. <a href="{{ url_for('courses.create') }}">Create your first course</a></p>
+{% endif %}
+{% endblock %}

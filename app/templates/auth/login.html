@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Login{% endblock %}
+
+{% block content %}
+<div class="auth-card">
+    <h2>Login</h2>
+    <form method="POST" class="form">
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" required autofocus>
+        </div>
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required>
+        </div>
+        <div class="form-group checkbox">
+            <label><input type="checkbox" name="remember"> Remember me</label>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Login</button>
+    </form>
+    <p class="auth-footer">Don't have an account? <a href="{{ url_for('auth.register') }}">Register</a></p>
+    <p class="muted small">Demo admin: <code>admin</code> / <code>admin123</code></p>
+</div>
+{% endblock %}

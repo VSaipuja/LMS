@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block title %}Study Planner{% endblock %}
+{% block content %}
+<div class="page-heading"><div><p class="eyebrow">BUILD A CONSISTENT ROUTINE</p><h1>My study planner</h1><p class="muted">Create small daily study tasks and track what you finish.</p></div><a class="btn btn-outline" href="{{ url_for('learning.insights') }}">Back to insights</a></div>
+<section class="planner-layout">
+  <div class="panel">
+    <h2>Add a study task</h2>
+    <form id="study-task-form" class="planner-form">
+      <label for="task-title">What do you want to study?</label><input id="task-title" maxlength="100" required placeholder="e.g. Revise DBMS normalization">
+      <label for="task-date">Target date</label><input id="task-date" type="date" required>
+      <label for="task-minutes">Planned time (minutes)</label><input id="task-minutes" type="number" min="5" max="600" value="30" required>
+      <button class="btn btn-primary" type="submit">Add to my plan</button>
+    </form>
+  </div>
+  <div class="panel"><div class="section-header"><h2>My tasks</h2><span id="task-count" class="badge">0 tasks</span></div><div id="study-task-list" class="task-list" aria-live="polite"><p class="muted">Your study tasks will appear here.</p></div></div>
+</section>
+<p class="small-note">Your planner tasks are saved in this browser on this device. They are not uploaded to the server or shared with instructors.</p>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/study-planner.js') }}"></script>{% endblock %}

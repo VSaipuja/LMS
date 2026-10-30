@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Take Quiz – {{ quiz.title }}{% endblock %}
+
+{% block content %}
+<div class="quiz-header">
+    <h1>{{ quiz.title }}</h1>
+    <p class="muted">{{ quiz.description }}</p>
+    <p class="meta">{{ questions|length }} questions · Time limit: {{ quiz.time_limit_minutes }} min · Passing: {{ quiz.passing_score }}%</p>
+</div>
+
+<form method="POST" id="quiz-form" class="quiz-form">
+    {% for q in questions %}
+    <div class="question-card">
+        <h3>Q{{ loop.index }}. {{ q.text }}</h3>
+        <div class="options-radio">
+            <label><input type="radio" name="q_{{ q.id }}" value="A" required> A. {{ q.option_a }}</label>
+            <label><input type="radio" name="q_{{ q.id }}" value="B"> B. {{ q.option_b }}</label>
+            <label><input type="radio" name="q_{{ q.id }}" value="C"> C. {{ q.option_c }}</label>
+            <label><input type="radio" name="q_{{ q.id }}" value="D"> D. {{ q.option_d }}</label>
+        </div>
+    </div>
+    {% endfor %}
+
+    <div class="form-actions">
+        <button type="submit" class="btn btn-primary btn-lg" onclick="return confirm('Submit your answers?');">
+            Submit Quiz
+        </button>
+    </div>
+</form>
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <h1>Learn Anytime, Anywhere</h1>
+    <p>A modern learning platform with courses, quizzes, and progress tracking.</p>
+    {% if not current_user.is_authenticated %}
+        <div class="hero-actions">
+            <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-lg">Get Started</a>
+            <a href="{{ url_for('courses.list_courses') }}" class="btn btn-outline btn-lg">Browse Courses</a>
+        </div>
+    {% else %}
+        <a href="{{ url_for('main.dashboard') }}" class="btn btn-primary btn-lg">Go to Dashboard</a>
+    {% endif %}
+</section>
+
+<section class="featured">
+    <h2>Featured Courses</h2>
+    {% if courses %}
+        <div class="card-grid">
+            {% for course in courses %}
+                <div class="card">
+                    <h3>{{ course.title }}</h3>
+                    <p class="muted">{{ course.description[:120] }}{% if course.description|length > 120 %}...{% endif %}</p>
+                    <p class="meta">By {{ course.instructor.username }} · {{ course.enrollment_count() }} students</p>
+                    <a href="{{ url_for('courses.detail', course_id=course.id) }}" class="btn btn-sm">View Course</a>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="muted">No courses published yet.</p>
+    {% endif %}
+</section>
+{% endblock %}

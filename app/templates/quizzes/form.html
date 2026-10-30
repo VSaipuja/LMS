@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}New Quiz{% endblock %}
+
+{% block content %}
+<div class="auth-card wide">
+    <h2>Create Quiz for "{{ course.title }}"</h2>
+    <form method="POST" class="form">
+        <div class="form-group">
+            <label for="title">Quiz Title</label>
+            <input type="text" id="title" name="title" required>
+        </div>
+        <div class="form-group">
+            <label for="description">Description</label>
+            <textarea id="description" name="description" rows="3"></textarea>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="time_limit">Time Limit (minutes)</label>
+                <input type="number" id="time_limit" name="time_limit" value="30" min="5" max="180">
+            </div>
+            <div class="form-group">
+                <label for="passing_score">Passing Score (%)</label>
+                <input type="number" id="passing_score" name="passing_score" value="60" min="0" max="100">
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Create Quiz</button>
+        <a href="{{ url_for('courses.detail', course_id=course.id) }}" class="btn btn-outline">Cancel</a>
+    </form>
+</div>
+{% endblock %}

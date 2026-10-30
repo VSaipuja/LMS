@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block title %}Learning Insights{% endblock %}
+{% block content %}
+<div class="page-heading">
+  <div><p class="eyebrow">YOUR LEARNING DATA</p><h1>Learning insights</h1><p class="muted">Use your actual lesson and quiz history to decide what to study next.</p></div>
+  <a class="btn btn-outline" href="{{ url_for('learning.study_planner') }}">Open study planner</a>
+</div>
+<div class="insight-grid">
+  <article class="insight-card"><span class="insight-label">Average quiz score</span><strong>{{ average_score }}%</strong><span class="muted">Across {{ total_attempts }} attempts</span></article>
+  <article class="insight-card"><span class="insight-label">Lessons completed</span><strong>{{ completed_lessons }}/{{ total_lessons }}</strong><span class="muted">Across your enrolled courses</span></article>
+  <article class="insight-card"><span class="insight-label">Lesson completion</span><strong>{{ progress_percent }}%</strong><div class="progress-track"><span style="width: {{ progress_percent }}%"></span></div></article>
+</div>
+<section class="section panel">
+  <h2>What should you revise?</h2>
+  <p class="muted">Quizzes with lower average scores are listed first. These are revision signals, not a final judgement of your ability.</p>
+  {% if quiz_insights %}
+  <div class="table-wrap"><table class="table">
+    <thead><tr><th>Quiz</th><th>Course</th><th>Average</th><th>Attempts</th><th>Recommended next step</th></tr></thead>
+    <tbody>{% for item in quiz_insights %}<tr>
+      <td><strong>{{ item.title }}</strong></td><td>{{ item.course }}</td>
+      <td><span class="score-pill {% if item.average < 60 %}score-low{% elif item.average < 80 %}score-mid{% else %}score-high{% endif %}">{{ item.average }}%</span></td>
+      <td>{{ item.attempts }}</td><td>{{ item.suggestion }}</td>
+    </tr>{% endfor %}</tbody>
+  </table></div>
+  {% else %}<div class="empty-state"><h3>Your insights will appear here</h3><p>Enroll in a course and complete a quiz to start building your learning analytics.</p><a class="btn btn-primary" href="{{ url_for('courses.list_courses') }}">Explore courses</a></div>{% endif %}
+</section>
+<div class="notice-card"><strong>How to use this page</strong><p>Start with the lowest-scoring quiz, revisit its lesson, take notes, and attempt the quiz again. Consistent improvement matters more than one high score.</p></div>
+{% endblock %}

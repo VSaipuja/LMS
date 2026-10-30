@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}Questions – {{ quiz.title }}{% endblock %}
+
+{% block content %}
+<div class="section-header">
+    <h1>{{ quiz.title }} – Questions</h1>
+    <a href="{{ url_for('courses.detail', course_id=quiz.course_id) }}" class="btn btn-outline">Back to Course</a>
+</div>
+
+<div class="two-col">
+    <div>
+        <h3>Existing Questions ({{ questions|length }})</h3>
+        {% if questions %}
+            <ol class="question-list">
+                {% for q in questions %}
+                <li>
+                    <strong>{{ q.text }}</strong>
+                    <ul class="options">
+                        <li class="{% if q.correct_option == 'A' %}correct{% endif %}">A. {{ q.option_a }}</li>
+                        <li class="{% if q.correct_option == 'B' %}correct{% endif %}">B. {{ q.option_b }}</li>
+                        <li class="{% if q.correct_option == 'C' %}correct{% endif %}">C. {{ q.option_c }}</li>
+                        <li class="{% if q.correct_option == 'D' %}correct{% endif %}">D. {{ q.option_d }}</li>
+                    </ul>
+                    <form method="POST" action="{{ url_for('quizzes.delete_question', question_id=q.id) }}"
+                          onsubmit="return confirm('Delete this question?');" style="display:inline">
+                        <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                    </form>
+                </li>
+                {% endfor %}
+            </ol>
+        {% else %}
+            <p class="muted">No questions yet. Add some below.</p>
+        {% endif %}
+    </div>
+
+    <div class="auth-card">
+        <h3>Add Question</h3>
+        <form method="POST" class="form">
+            <div class="form-group">
+                <label>Question Text</label>
+                <textarea name="text" rows="3" required></textarea>
+            </div>
+            <div class="form-group">
+                <label>Option A</label>
+                <input type="text" name="option_a" required>
+            </div>
+            <div class="form-group">
+                <label>Option B</label>
+                <input type="text" name="option_b" required>
+            </div>
+            <div class="form-group">
+                <label>Option C</label>
+                <input type="text" name="option_c" required>
+            </div>
+            <div class="form-group">
+                <label>Option D</label>
+                <input type="text" name="option_d" required>
+            </div>
+            <div class="form-group">
+                <label>Correct Option</label>
+                <select name="correct_option" required>
+                    <option value="A">A</option>
+                    <option value="B">B</option>
+                    <option value="C">C</option>
+                    <option value="D">D</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Add Question</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}Courses{% endblock %}
+
+{% block content %}
+<div class="section-header">
+    <h1>All Courses</h1>
+    {% if current_user.is_authenticated and current_user.is_instructor() %}
+        <a href="{{ url_for('courses.create') }}" class="btn btn-primary">+ New Course</a>
+    {% endif %}
+</div>
+
+{% if current_user.is_authenticated and current_user.is_student() %}
+    <p class="muted">Showing courses for your department: <strong>{{ current_user.department }}</strong> + General</p>
+{% else %}
+    <div class="dept-filters">
+        <a href="{{ url_for('courses.list_courses') }}" class="btn btn-sm {% if current_dept == 'ALL' %}btn-primary{% else %}btn-outline{% endif %}">All</a>
+        {% for code, name in departments %}
+            <a href="{{ url_for('courses.list_courses', dept=code) }}"
+               class="btn btn-sm {% if current_dept == code %}btn-primary{% else %}btn-outline{% endif %}">
+                {{ code }}
+            </a>
+        {% endfor %}
+    </div>
+{% endif %}
+
+{% if courses %}
+    <div class="card-grid" style="margin-top: 1.25rem;">
+        {% for course in courses %}
+            <div class="card">
+                <div class="card-dept">
+                    <span class="badge dept-{{ course.department }}">{{ course.department }}</span>
+                </div>
+                <h3>{{ course.title }}</h3>
+                <p class="muted">{{ course.description[:140] }}{% if course.description|length > 140 %}...{% endif %}</p>
+                <p class="meta">Instructor: {{ course.instructor.username }} · {{ course.enrollment_count() }} enrolled</p>
+                <div class="card-actions">
+                    <a href="{{ url_for('courses.detail', course_id=course.id) }}" class="btn btn-sm">View</a>
+                    {% if current_user.is_authenticated and current_user.is_student() and course.id not in enrolled_ids %}
+                        <form method="POST" action="{{ url_for('courses.enroll', course_id=course.id) }}" style="display:inline">
+                            <button type="submit" class="btn btn-sm btn-primary">Enroll</button>
+                        </form>
+                    {% elif current_user.is_authenticated and current_user.is_student() and course.id in enrolled_ids %}
+                        <span class="badge badge-success">Enrolled</span>
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <p class="muted" style="margin-top: 1.5rem;">No courses available for this filter.</p>
+{% endif %}
+{% endblock %}

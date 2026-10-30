@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Register{% endblock %}
+
+{% block content %}
+<div class="auth-card">
+    <h2>Create Account</h2>
+    <form method="POST" class="form">
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" required autofocus>
+        </div>
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" required>
+        </div>
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required minlength="6">
+        </div>
+        <div class="form-group">
+            <label for="role">I am a</label>
+            <select id="role" name="role">
+                <option value="student">Student</option>
+                <option value="instructor">Instructor</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="department">Department</label>
+            <select id="department" name="department" required>
+                {% for code, name in departments %}
+                    {% if code != 'GENERAL' %}
+                    <option value="{{ code }}">{{ code }} – {{ name }}</option>
+                    {% endif %}
+                {% endfor %}
+                <option value="GENERAL">GENERAL – All Departments</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Register</button>
+    </form>
+    <p class="auth-footer">Already have an account? <a href="{{ url_for('auth.login') }}">Login</a></p>
+</div>
+{% endblock %}

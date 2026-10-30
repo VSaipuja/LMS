@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<h1>Admin Dashboard</h1>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-value">{{ total_users }}</div>
+        <div class="stat-label">Users</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value">{{ total_courses }}</div>
+        <div class="stat-label">Courses</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value">{{ total_quizzes }}</div>
+        <div class="stat-label">Quizzes</div>
+    </div>
+</div>
+
+<div class="section">
+    <a href="{{ url_for('admin.users') }}" class="btn btn-primary">Manage Users</a>
+    <a href="{{ url_for('courses.list_courses') }}" class="btn btn-outline">View Courses</a>
+</div>
+{% endblock %}

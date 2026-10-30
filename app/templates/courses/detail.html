@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block title %}{{ course.title }}{% endblock %}
+
+{% block content %}
+<div class="course-header">
+    <span class="badge dept-{{ course.department }}">{{ course.department }}</span>
+    <h1>{{ course.title }}</h1>
+    <p class="muted">Instructor: {{ course.instructor.username }} · {{ course.enrollment_count() }} students</p>
+    <p>{{ course.description }}</p>
+
+    <div class="actions">
+        {% if current_user.is_authenticated and current_user.is_student() and not is_enrolled %}
+            <form method="POST" action="{{ url_for('courses.enroll', course_id=course.id) }}">
+                <button type="submit" class="btn btn-primary">Enroll to start learning</button>
+            </form>
+        {% elif is_enrolled %}
+            <span class="badge badge-success">Enrolled</span>
+            <span class="muted">Pass each quiz to unlock the next video.</span>
+        {% endif %}
+
+        {% if current_user.is_authenticated and (current_user.id == course.instructor_id or current_user.is_admin()) %}
+            <a href="{{ url_for('courses.edit', course_id=course.id) }}" class="btn btn-outline">Edit Course</a>
+            <form method="POST" action="{{ url_for('courses.delete', course_id=course.id) }}" style="display:inline"
+                  onsubmit="return confirm('Delete this course?');">
+                <button type="submit" class="btn btn-danger">Delete</button>
+            </form>
+        {% endif %}
+    </div>
+</div>
+
+<section class="section">
+    <h2>Lessons & Videos</h2>
+    {% if not is_enrolled and current_user.is_authenticated and current_user.is_student() %}
+        <p class="muted">Enroll in this course to watch videos and take quizzes.</p>
+    {% elif not current_user.is_authenticated %}
+        <p class="muted"><a href="{{ url_for('auth.login') }}">Login</a> and enroll to access lessons.</p>
+    {% endif %}
+
+    {% if lesson_status %}
+        <div class="lesson-list">
+            {% for item in lesson_status %}
+                {% set lesson = item.lesson %}
+                <div class="lesson-card {% if not item.unlocked %}locked{% endif %}">
+                    <div class="lesson-num">{{ lesson.order + 1 }}</div>
+                    <div class="lesson-body">
+                        <h3>{{ lesson.title }}</h3>
+                        <p class="muted">{{ lesson.description or '' }}</p>
+                        <div class="lesson-actions">
+                            {% if item.unlocked %}
+                                <a href="{{ url_for('courses.watch_lesson', course_id=course.id, lesson_id=lesson.id) }}"
+                                   class="btn btn-sm btn-primary">▶ Watch Video</a>
+                                {% if lesson.quiz_id %}
+                                    {% if item.passed_quiz %}
+                                        <span class="badge badge-success">Quiz Passed ✓</span>
+                                        <a href="{{ url_for('quizzes.take', quiz_id=lesson.quiz_id) }}" class="btn btn-sm btn-outline">Retake Quiz</a>
+                                    {% else %}
+                                        <a href="{{ url_for('quizzes.take', quiz_id=lesson.quiz_id) }}" class="btn btn-sm">Take Quiz to Unlock Next</a>
+                                    {% endif %}
+                                {% endif %}
+                            {% else %}
+                                <span class="badge badge-warning">🔒 Locked</span>
+                                <span class="muted">Pass the previous lesson quiz to unlock</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="muted">No lessons added yet.</p>
+    {% endif %}
+</section>
+{% endblock %}

@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Quiz Result{% endblock %}
+
+{% block content %}
+<div class="result-header {% if attempt.passed %}passed{% else %}failed{% endif %}">
+    <h1>{{ quiz.title }} – Result</h1>
+    <div class="score-display">{{ attempt.score }}%</div>
+    <p>
+        {{ attempt.correct_count }} / {{ attempt.total_questions }} correct ·
+        {% if attempt.passed %}
+            <span class="badge badge-success">Passed</span>
+        {% else %}
+            <span class="badge badge-warning">Failed</span> (need {{ quiz.passing_score }}%)
+        {% endif %}
+    </p>
+    <p class="muted">Completed at {{ attempt.completed_at.strftime('%Y-%m-%d %H:%M') }}</p>
+
+    {% if attempt.passed %}
+        <p style="margin-top: 1rem; font-weight: 600;">🎉 Next lesson unlocked! Go back to the course to continue.</p>
+    {% else %}
+        <p style="margin-top: 1rem;">Try again to unlock the next video.</p>
+        <a href="{{ url_for('quizzes.take', quiz_id=quiz.id) }}" class="btn btn-primary">Retake Quiz</a>
+    {% endif %}
+</div>
+
+<section class="section">
+    <h2>Review</h2>
+    {% for q in questions %}
+        {% set selected = answers.get(q.id|string, '') %}
+        <div class="question-card review {% if selected == q.correct_option %}correct-answer{% else %}wrong-answer{% endif %}">
+            <h3>Q{{ loop.index }}. {{ q.text }}</h3>
+            <ul class="options">
+                <li class="{% if q.correct_option == 'A' %}correct{% endif %} {% if selected == 'A' %}selected{% endif %}">A. {{ q.option_a }}</li>
+                <li class="{% if q.correct_option == 'B' %}correct{% endif %} {% if selected == 'B' %}selected{% endif %}">B. {{ q.option_b }}</li>
+                <li class="{% if q.correct_option == 'C' %}correct{% endif %} {% if selected == 'C' %}selected{% endif %}">C. {{ q.option_c }}</li>
+                <li class="{% if q.correct_option == 'D' %}correct{% endif %} {% if selected == 'D' %}selected{% endif %}">D. {{ q.option_d }}</li>
+            </ul>
+            <p class="review-note">
+                Your answer: <strong>{{ selected or '—' }}</strong> ·
+                Correct: <strong>{{ q.correct_option }}</strong>
+            </p>
+        </div>
+    {% endfor %}
+</section>
+
+<a href="{{ url_for('courses.detail', course_id=quiz.course_id) }}" class="btn btn-primary">Back to Course</a>
+{% endblock %}
